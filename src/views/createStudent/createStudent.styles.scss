@@ -1,0 +1,64 @@
+.create-student {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: -2px;
+  gap: 10px;
+  border: 2px solid #000;
+  height: 85vh;
+  &__form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding: 1px;
+    &__label {
+      font-size: 1rem;
+      display: flex;
+      padding-left: 1rem;
+      border-radius: 4px;
+      align-items: center;
+      background-color: rgb(223, 222, 222);
+      width: 100%;
+      max-width: 100px;
+      z-index: 99;
+      height: 40px;
+    }
+    &__input {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-left: -4px;
+      width: 100%;
+      max-width: 350px;
+      font-size: 0.8rem;
+      height: 40px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    gap: 10px;
+    padding: 1px;
+    height: 200px;
+    margin-right: 64px;
+    &__button {
+      background-color: #646464;
+      border: none;
+      color: white;
+      padding: 12.5px 15px;
+      border-radius: 4px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 3px 2px;
+      cursor: pointer;
+    }
+    &__button:hover {
+      background-color: #acacac;
+    }
+  }
+}

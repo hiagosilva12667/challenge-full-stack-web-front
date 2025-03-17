@@ -1,0 +1,20 @@
+.header {
+  display: flex;
+  align-items: center;
+  position: static;
+
+  &-title {
+    font-size: 24px;
+    font-weight: 700;
+    padding-left: 64px;
+    color: #333;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  &-logo {
+    width: 50px;
+    margin-left: 20px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+}
