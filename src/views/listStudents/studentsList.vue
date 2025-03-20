@@ -25,25 +25,39 @@
         hide-default-footer
         v-model:sort-by="sortBy"
       >
-        <template v-slot:item.acoes="{ item }">
+        <template v-slot:item.actions="{ item }">
           <button class="btn" @click="editStudent(item)">[Editar]</button>
-          <button class="btn" @click="deleteItem(item)">[Excluir]</button>
+          <button class="btn" @click="confirmDelete(item)">[Excluir]</button>
         </template>
       </v-data-table>
     </div>
   </div>
+  <Modal
+    :show="showDeleteModal"
+    :student="selectedStudent"
+    @close="showDeleteModal = false"
+    @confirm="deleteItem"
+    text-content="em certeza que deseja excluir o aluno "
+    title-modal="Confirmar Exclusão"
+    cancel-btn="Cancelar"
+    delete-btn="Excluir"
+  />
 </template>
 
 <script lang="ts">
 import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
+import Modal from "@/components/Modal/Modal.vue";
 import Api from "@/services/api";
 export default {
   name: "StudentsList",
+  components: { Modal },
   setup() {
     const router = useRouter();
     const searchInput = ref("");
     const sortBy = ref([]);
+    const showDeleteModal = ref(false);
+    const selectedStudent = ref<any>(null);
 
     const sortDesc = ref(false);
 
@@ -55,7 +69,7 @@ export default {
       },
       { title: "Nome", key: "name", align: "end" as "end" },
       { title: "CPF", key: "student_cpf", align: "end" as "end" },
-      { title: "Ações", key: "acoes", align: "end" as "end" },
+      { title: "Ações", key: "actions", align: "end" as "end" },
     ]);
 
     const serverItems = ref<any[]>([]);
@@ -133,7 +147,14 @@ export default {
       }
     };
 
-    const deleteItem = async (item: any) => {
+    const confirmDelete = (item: any) => {
+      selectedStudent.value = item;
+      showDeleteModal.value = true;
+    };
+
+    const deleteItem = async () => {
+      if (!selectedStudent.value) return;
+
       const token = localStorage.getItem("token");
 
       if (!token) {
@@ -142,25 +163,27 @@ export default {
       }
 
       try {
-        await Api.delete(`/students/delete-student/${item.academic_register}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        await Api.delete(
+          `/students/delete-student/${selectedStudent.value.academic_register}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         console.log("Aluno deletado com sucesso!");
 
         serverItems.value = serverItems.value.filter(
-          (student) => student.academic_register !== item.academic_register
+          (student) =>
+            student.academic_register !==
+            selectedStudent.value.academic_register
         );
+
+        showDeleteModal.value = false;
       } catch (error: any) {
         console.error("Erro ao deletar aluno:", error);
-
-        if (error.response) {
-          alert(error.response.data.error || "Erro ao deletar aluno.");
-        } else {
-          alert("Erro inesperado ao tentar deletar o aluno.");
-        }
+        alert(error.response?.data.error || "Erro ao deletar aluno.");
       }
     };
 
@@ -198,6 +221,9 @@ export default {
       onChangeSearchInput,
       sortBy,
       sortDesc,
+      confirmDelete,
+      showDeleteModal,
+      selectedStudent,
     };
   },
 };
