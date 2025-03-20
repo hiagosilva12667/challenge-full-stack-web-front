@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AcademicModuleHeaderContent: typeof import('./src/components/AcademicModuleHeaderContent/AcademicModuleHeaderContent.vue')['default']
     Header: typeof import('./src/components/Header/Header.vue')['default']
+    LogoutButton: typeof import('./src/components/LogoutButton/LogoutButton.vue')['default']
     Menu: typeof import('./src/components/Menu/Menu.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
