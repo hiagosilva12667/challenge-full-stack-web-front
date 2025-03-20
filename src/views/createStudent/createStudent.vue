@@ -28,7 +28,7 @@
         <label class="create-student__form__label" for="ra">RA</label>
         <input
           class="create-student__form__input"
-          v-model="student.academicRegister"
+          v-model="student.academic_register"
           type="text"
           id="ra"
           placeholder="Informe o registro acadêmico"
@@ -36,10 +36,10 @@
         />
       </section>
       <section class="create-student__form">
-        <label class="create-student__form__label" for="cpf">CPF</label>
+        <label class="create-student__form__label" for="student_cpf">CPF</label>
         <input
           class="create-student__form__input"
-          v-model="student.cpf"
+          v-model="student.student_cpf"
           type="text"
           id="cpf"
           placeholder="Informe o número do documento"
@@ -77,18 +77,24 @@ export default {
     const student = ref({
       name: "",
       email: "",
-      academicRegister: "",
-      cpf: "",
+      academic_register: "",
+      student_cpf: "",
     });
 
     const createStudent = () => {
-      Api.post("/students", student.value)
+      const token = localStorage.getItem("token");
+
+      Api.post("/students/create-student", student.value, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
         .then(() => {
           console.log("Aluno cadastrado com sucesso!");
           router.push("/students");
         })
         .catch((error) => {
-          console.error(error);
+          console.error("Erro ao criar aluno:", error.response?.data || error);
         });
     };
 

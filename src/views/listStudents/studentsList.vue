@@ -26,9 +26,7 @@
         v-model:sort-by="sortBy"
       >
         <template v-slot:item.acoes="{ item }">
-          <button class="btn" @click="editStudent(item.academicRegister)">
-            [Editar]
-          </button>
+          <button class="btn" @click="editStudent(item)">[Editar]</button>
           <button class="btn" @click="deleteItem(item)">[Excluir]</button>
         </template>
       </v-data-table>
@@ -53,22 +51,33 @@ export default {
       {
         title: "Registro Acadêmico",
         align: "start" as "start",
-        key: "academicRegister",
+        key: "academic_register",
       },
       { title: "Nome", key: "name", align: "end" as "end" },
-      { title: "CPF", key: "cpf", align: "end" as "end" },
+      { title: "CPF", key: "student_cpf", align: "end" as "end" },
       { title: "Ações", key: "acoes", align: "end" as "end" },
     ]);
 
     const serverItems = ref<any[]>([]);
+    const originalItems = ref<any[]>([]);
 
     const getStudents = async () => {
       try {
-        const response = await Api.get("/students");
-        console.log("Alunos:", response.data);
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("Erro: Token não encontrado no localStorage");
+          return;
+        }
+
+        const response = await Api.get("/students/students", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         serverItems.value = response.data;
-      } catch (error) {
-        console.error("Erro ao buscar alunos:", error);
+        originalItems.value = [...response.data];
+      } catch (error: any) {
+        console.error("Erro ao buscar alunos:", error.response?.data || error);
       }
     };
 
@@ -76,41 +85,98 @@ export default {
       getStudents();
     });
 
-    const originalItems = ref([...serverItems.value]);
-
-    const editStudent = (id: number) => {
-      if (!id) {
-        console.error("Erro: ID do aluno está indefinido");
+    const editStudent = async (item: any) => {
+      if (!item || !item.academic_register) {
+        console.error("Erro: Dados do aluno estão indefinidos");
         return;
       }
-      router.push(`/students/${id}`);
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.error("Erro: Token não encontrado no localStorage");
+        return;
+      }
+
+      try {
+        const response = await Api.put(
+          `students/update-student/${item.academic_register}`,
+          {
+            name: item.name,
+            email: item.email,
+            student_cpf: item.student_cpf,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("Aluno editado com sucesso!");
+
+        serverItems.value = serverItems.value.map((student) =>
+          student.academic_register === item.academic_register
+            ? response.data
+            : student
+        );
+
+        router.push(`/students/${item.academic_register}`);
+      } catch (error: any) {
+        console.error("Erro ao editar aluno:", error);
+
+        if (error.response) {
+          alert(error.response.data.error || "Erro ao editar aluno.");
+        } else {
+          alert("Erro inesperado ao tentar editar o aluno.");
+        }
+      }
     };
 
-    const deleteItem = (item: any) => {
-      console.log("Deletando aluno:", item);
-      if (!item) {
-        console.error("Erro: Item está indefinido");
+    const deleteItem = async (item: any) => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.error("Erro: Token não encontrado no localStorage");
         return;
       }
-      Api.delete(`/students/${item.academicRegister}`)
-        .then(() => {
-          console.log("Aluno deletado com sucesso!");
-          getStudents();
-        })
-        .catch((error) => {
-          console.error("Erro ao deletar aluno:", error);
+
+      try {
+        await Api.delete(`/students/delete-student/${item.academic_register}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
+
+        console.log("Aluno deletado com sucesso!");
+
+        serverItems.value = serverItems.value.filter(
+          (student) => student.academic_register !== item.academic_register
+        );
+      } catch (error: any) {
+        console.error("Erro ao deletar aluno:", error);
+
+        if (error.response) {
+          alert(error.response.data.error || "Erro ao deletar aluno.");
+        } else {
+          alert("Erro inesperado ao tentar deletar o aluno.");
+        }
+      }
     };
 
     const searchItems = () => {
-      const searchValue = searchInput.value;
-      if (searchValue === "") {
-        serverItems.value = originalItems.value;
+      const searchValue = searchInput.value.trim().toLowerCase();
+
+      if (!searchValue) {
+        serverItems.value = [...originalItems.value];
         return;
       }
-      serverItems.value = originalItems.value.filter((item) => {
-        return item.name.toLowerCase().includes(searchValue.toLowerCase());
-      });
+
+      serverItems.value = originalItems.value.filter(
+        (item) =>
+          item.name.toLowerCase().includes(searchValue) ||
+          item.academic_register.toString().includes(searchValue)
+      );
     };
 
     const onChangeSearchInput = (event: any) => {
