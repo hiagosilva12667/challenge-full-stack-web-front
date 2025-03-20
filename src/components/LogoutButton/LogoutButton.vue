@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import AuthService from "@/services/authService";
+import AuthService from "../../services/authService";
 
 const router = useRouter();
 
