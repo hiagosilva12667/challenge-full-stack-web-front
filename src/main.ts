@@ -15,7 +15,7 @@ import App from "./App.vue";
 import { createApp } from "vue";
 
 const app = createApp(App);
-app.use(createPinia()); // Adiciona Pinia ao projeto
+app.use(createPinia());
 registerPlugins(app);
 
 app.mount("#app");

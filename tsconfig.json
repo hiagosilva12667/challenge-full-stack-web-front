@@ -10,10 +10,17 @@
   ],
   "compilerOptions": {
     "allowImportingTsExtensions": false,
-    "texttimModuleSyntax": true,
-    "baseUrl": "./",
+    "verbatimModuleSyntax": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
-    }
+      "@/*": ["./src/*"]
+    },
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   }
 }

@@ -18,7 +18,7 @@ export default createVuetify({
     themes: {
       light: {
         colors: {
-          background: "#f5f5f5", // Define o fundo padrão
+          background: "#f5f5f5",
         },
       },
     },
