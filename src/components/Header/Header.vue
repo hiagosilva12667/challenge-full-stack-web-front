@@ -1,9 +1,9 @@
 <template>
   <div class="header">
     <h1 class="header-title">Instituto JavaScript</h1>
-    <router-link to="/">
-      <img class="header-logo" src="@/assets/logo.jpg" size="65" />
-    </router-link>
+    <a href="/">
+      <img class="header-logo" src="/src/assets/logo.jpg" size="65" />
+    </a>
   </div>
 </template>
 
