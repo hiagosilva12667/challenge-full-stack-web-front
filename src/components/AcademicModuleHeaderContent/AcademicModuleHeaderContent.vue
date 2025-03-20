@@ -1,6 +1,6 @@
 <template>
   <div class="academic-module-header-content">
-    <div class="title">Academic Module</div>
+    <div class="title">Módulo acadêmico</div>
     <slot />
   </div>
 </template>
