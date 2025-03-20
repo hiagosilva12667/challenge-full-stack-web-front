@@ -4,7 +4,7 @@ export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
     token: localStorage.getItem("token") || null,
-    errorMessage: null, // 🔴 Estado global para mensagens de erro
+    errorMessage: null,
   }),
   actions: {
     async createAccount(data: any) {
@@ -25,9 +25,9 @@ export const useAuthStore = defineStore("auth", {
         }
 
         this.user = responseData;
-        this.errorMessage = null; // 🔹 Limpa erro ao sucesso
+        this.errorMessage = null;
       } catch (error: any) {
-        this.errorMessage = error.message; // 🔴 Salva a mensagem de erro no estado
+        this.errorMessage = error.message;
       }
     },
 
@@ -50,12 +50,12 @@ export const useAuthStore = defineStore("auth", {
 
         this.token = responseData.token;
         localStorage.setItem("token", responseData.token);
-        this.errorMessage = null; // 🔹 Limpa erro ao sucesso
+        this.errorMessage = null;
 
-        return true; // Indica sucesso
+        return true;
       } catch (error: any) {
-        this.errorMessage = error.message; // 🔴 Captura erro no estado
-        return false; // Indica erro
+        this.errorMessage = error.message;
+        return false;
       }
     },
 
@@ -63,7 +63,7 @@ export const useAuthStore = defineStore("auth", {
       this.token = null;
       this.user = null;
       localStorage.removeItem("token");
-      this.errorMessage = null; // 🔹 Limpa erro ao deslogar
+      this.errorMessage = null;
     },
   },
 });
